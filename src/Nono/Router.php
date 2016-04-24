@@ -1,8 +1,4 @@
 <?php
-/**
- * @author neun
- * @since  2016-04-24
- */
 
 namespace Nono;
 
@@ -34,7 +30,7 @@ class Router
             }
         }
 
-        throw new \Exception("Route not found!");
+        throw new \Exception('Route ' . $request->uri() . ' not found!');
     }
 
     /**
@@ -76,7 +72,8 @@ class Router
         if (is_string($action) && is_int(strpos($action, '::'))) {
             list($class, $method) = explode('::', $action);
             if (class_exists($class)) {
-                return (new $class(array_shift($params)))->$method(...$params);
+                $request = array_shift($params);
+                return (new $class($request))->$method(...$params);
             }
         }
 

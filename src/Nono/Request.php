@@ -4,6 +4,13 @@ namespace Nono;
 
 class Request
 {
+    public function __construct($uri = null)
+    {
+        if ($uri) {
+            $_SERVER['REQUEST_URI'] = $uri;
+        }
+    }
+
     /**
      * @return string
      */
@@ -55,7 +62,7 @@ class Request
     /**
      * @return float
      */
-    public function timeFloat()
+    public function requestTimeFloat()
     {
         return $this->server('REQUEST_TIME_FLOAT');
     }
@@ -73,9 +80,27 @@ class Request
      * @param string $key
      * @return string|null
      */
-    public function query($key)
+    public function request($key)
     {
         return isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
+    }
+
+    /**
+     * @param string $key
+     * @return string|null
+     */
+    public function get($key)
+    {
+        return isset($_GET[$key]) ? $_GET[$key] : null;
+    }
+
+    /**
+     * @param string $key
+     * @return string|null
+     */
+    public function post($key)
+    {
+        return isset($_POST[$key]) ? $_POST[$key] : null;
     }
 
     /**
