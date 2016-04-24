@@ -1,0 +1,16 @@
+{
+    "name": "nimmneun/nono",
+    "description": "The no nonsense php micro framework",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stefan",
+            "email": "nimmneun@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    }
+}
