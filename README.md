@@ -6,8 +6,8 @@
 require_once '../vendor/autoload.php';
 
 // Define routes using a closure ...
-$routes['/'] = function () {
-    echo 'Welcome to the index page =)';
+$routes['/hello/{name}'] = function ($request, $name) {
+    printf('Hello %s', $name);
 };
 
 // ... or the Controller::method style. 
@@ -22,4 +22,4 @@ $app = new Nono\Application(
 $app->respond();
 ```
 
-... Application should/could probably named Response.
+... Application could probably be named Response ...
