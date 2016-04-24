@@ -6,9 +6,9 @@ class Application
 {
     private $request;
     private $router;
+    private $content;
 
     /**
-     * Application constructor.
      * @param Request $request
      * @param Router $router
      */
@@ -34,8 +34,26 @@ class Application
         return $this->router;
     }
 
+    /**
+     * @return string
+     * @throws \Exception
+     */
     public function run()
     {
-        return $this->router->route($this->request);
+        ob_start();
+        $this->router->route($this->request);
+        return $this->content = ob_get_clean();
+    }
+
+    /**
+     * @return void
+     */
+    public function respond()
+    {
+        if ($this->content) {
+            echo $this->content;
+        } else {
+            echo $this->run();
+        }
     }
 }
