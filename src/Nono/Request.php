@@ -9,8 +9,10 @@ class Request
      */
     public function __construct($url = null)
     {
-        if ($url) {
-            $this->overrideRequest(parse_url($url));
+        if (null !== $url
+            && is_array($parsed = parse_url($url))
+        ) {
+            $this->overrideRequest($parsed);
         }
     }
 
