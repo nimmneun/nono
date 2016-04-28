@@ -4,10 +4,13 @@ namespace Nono;
 
 class Request
 {
-    public function __construct($uri = null)
+    /**
+     * @param string $url
+     */
+    public function __construct($url = null)
     {
-        if ($uri) {
-            $_SERVER['REQUEST_URI'] = $uri;
+        if ($url) {
+            $this->overrideRequest(parse_url($url));
         }
     }
 
@@ -110,5 +113,20 @@ class Request
     public function session($key)
     {
         return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+    }
+
+    /**
+     * @param array $parts
+     */
+    private function overrideRequest(array $parts)
+    {
+        $_SERVER['REQUEST_SCHEME'] = isset($parts['scheme']) ? $parts['scheme'] : null;
+        $_SERVER['HTTP_HOST'] = isset($parts['host']) ? $parts['host'] : null;
+        $_SERVER['REQUEST_URI'] = isset($parts['path']) ? $parts['path'] : null;
+        $_SERVER['QUERY_STRING'] = isset($parts['query']) ? $parts['query'] : null;
+        $_SERVER['REQUEST_TIME_FLOAT'] = microtime(1);
+
+        preg_match_all('~([^&=]+)=([^&=]+)~', $_SERVER['QUERY_STRING'], $m);
+        $_REQUEST = $_GET = $_POST = array_combine($m[1], $m[2]);
     }
 }

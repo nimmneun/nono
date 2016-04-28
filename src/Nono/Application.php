@@ -4,8 +4,19 @@ namespace Nono;
 
 class Application
 {
+    /**
+     * @var Request
+     */
     private $request;
+
+    /**
+     * @var Router
+     */
     private $router;
+
+    /**
+     * @var string
+     */
     private $content;
 
     /**
