@@ -71,7 +71,7 @@ class Router
 
         if (is_string($action) && is_int(strpos($action, '::'))) {
             list($class, $method) = explode('::', $action);
-            if (class_exists($class)) {
+            if (class_exists($class) && method_exists($class, $method)) {
                 $request = array_shift($params);
                 return (new $class($request))->$method(...$params);
             }

@@ -1,3 +1,5 @@
 .idea/
+app/
+tests/
 vendor/
 www/

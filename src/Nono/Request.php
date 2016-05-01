@@ -9,7 +9,7 @@ class Request
      */
     public function __construct($url = null)
     {
-        if (null !== $url
+        if (filter_var($url, FILTER_VALIDATE_URL)
             && is_array($parsed = parse_url($url))
         ) {
             $this->overrideRequest($parsed);
