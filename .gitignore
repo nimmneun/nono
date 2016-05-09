@@ -1,5 +1,6 @@
 .idea/
 app/
+res/
 tests/
 vendor/
 www/

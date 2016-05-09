@@ -73,6 +73,14 @@ class Request
     }
 
     /**
+     * @return float
+     */
+    public function elapsedRequestTimeFloat()
+    {
+        return microtime(1) - $this->server('REQUEST_TIME_FLOAT');
+    }
+
+    /**
      * @param string $key
      * @return string|null
      */
