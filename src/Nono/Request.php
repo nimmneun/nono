@@ -13,16 +13,6 @@ namespace Nono;
 class Request
 {
     /**
-     * @var array
-     */
-    private $globals;
-
-    public function __construct()
-    {
-        $this->globals = $GLOBALS;
-    }
-
-    /**
      * @return string
      */
     public function uri()
@@ -88,8 +78,8 @@ class Request
 
     public function __call($name, $args)
     {
-        return isset($this->globals['_'.strtoupper($name)][$args[0]])
-            ? $this->globals['_'.strtoupper($name)][$args[0]]
+        return isset($GLOBALS['_' . strtoupper($name)][$args[0]])
+            ? $GLOBALS['_' . strtoupper($name)][$args[0]]
             : null;
     }
 }

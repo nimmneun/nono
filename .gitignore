@@ -1,7 +1,5 @@
 .idea/
 app/
 res/
-tests/
 vendor/
 www/
-phpunit.xml
