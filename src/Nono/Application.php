@@ -5,13 +5,6 @@ namespace Nono;
 class Application
 {
     /**
-     * Application root directory e.g. /var/domain.com/
-     *
-     * @var string
-     */
-    private $rootDir;
-
-    /**
      * @var Request
      */
     private $request;
@@ -33,17 +26,9 @@ class Application
      */
     public function __construct($rootDir, Request $request, Router $router)
     {
-        define('APP_ROOT', rtrim($rootDir, '/\\'));
+        define('APP_ROOT', dirname($rootDir));
         $this->router = $router;
         $this->request = $request;
-    }
-
-    /**
-     * @return string
-     */
-    public function rootDir()
-    {
-        return $this->rootDir;
     }
 
     /**

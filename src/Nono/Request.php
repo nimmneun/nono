@@ -2,18 +2,24 @@
 
 namespace Nono;
 
+/**
+ * @method string get(string $name)
+ * @method string post(string $name)
+ * @method string request(string $name)
+ * @method string server(string $name)
+ * @method string session(string $name)
+ * @method array files(string $name)
+ */
 class Request
 {
     /**
-     * @param string $url
+     * @var array
      */
-    public function __construct($url = null)
+    private $globals;
+
+    public function __construct()
     {
-        if (filter_var($url, FILTER_VALIDATE_URL)
-            && is_array($parsed = parse_url($url))
-        ) {
-            $this->overrideRequest($parsed);
-        }
+        $this->globals = $GLOBALS;
     }
 
     /**
@@ -80,63 +86,10 @@ class Request
         return microtime(1) - $this->server('REQUEST_TIME_FLOAT');
     }
 
-    /**
-     * @param string $key
-     * @return string|null
-     */
-    public function server($key)
+    public function __call($name, $args)
     {
-        return isset($_SERVER[$key]) ? $_SERVER[$key] : null;
-    }
-
-    /**
-     * @param string $key
-     * @return string|null
-     */
-    public function request($key)
-    {
-        return isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
-    }
-
-    /**
-     * @param string $key
-     * @return string|null
-     */
-    public function get($key)
-    {
-        return isset($_GET[$key]) ? $_GET[$key] : null;
-    }
-
-    /**
-     * @param string $key
-     * @return string|null
-     */
-    public function post($key)
-    {
-        return isset($_POST[$key]) ? $_POST[$key] : null;
-    }
-
-    /**
-     * @param string $key
-     * @return string|null
-     */
-    public function session($key)
-    {
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
-    }
-
-    /**
-     * @param array $parts
-     */
-    private function overrideRequest(array $parts)
-    {
-        $_SERVER['REQUEST_SCHEME'] = isset($parts['scheme']) ? $parts['scheme'] : null;
-        $_SERVER['HTTP_HOST'] = isset($parts['host']) ? $parts['host'] : null;
-        $_SERVER['REQUEST_URI'] = isset($parts['path']) ? $parts['path'] : null;
-        $_SERVER['QUERY_STRING'] = isset($parts['query']) ? $parts['query'] : null;
-        $_SERVER['REQUEST_TIME_FLOAT'] = microtime(1);
-
-        preg_match_all('~([^&=]+)=([^&=]+)~', $_SERVER['QUERY_STRING'], $m);
-        $_REQUEST = $_GET = $_POST = array_combine($m[1], $m[2]);
+        return isset($this->globals['_'.strtoupper($name)][$args[0]])
+            ? $this->globals['_'.strtoupper($name)][$args[0]]
+            : null;
     }
 }

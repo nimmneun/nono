@@ -2,6 +2,13 @@
 
 namespace Nono;
 
+/**
+ * @method void get(string $route, string|Callable $action)
+ * @method void post(string $route, string|Callable $action)
+ * @method void put(string $route, string|Callable $action)
+ * @method void delete(string $route, string|Callable $action)
+ * @method void any(string $route, string|Callable $action)
+ */
 class Router
 {
     /**
@@ -24,7 +31,7 @@ class Router
      */
     public function route(Request $request)
     {
-        foreach ($this->routes as $route => $action) {
+        foreach ($this->routes($request->method()) as $route => $action) {
             if ($params = $this->match($route, $request)) {
                 return $this->call($action, $params);
             }
@@ -69,7 +76,7 @@ class Router
             return $action(...$params);
         }
 
-        if (is_string($action) && is_int(strpos($action, '::'))) {
+        if (is_string($action) && false !== strpos($action, '::')) {
             list($class, $method) = explode('::', $action);
             if (class_exists($class) && method_exists($class, $method)) {
                 $request = array_shift($params);
@@ -77,6 +84,36 @@ class Router
             }
         }
 
-        throw new \Exception('Failed to call callable ' . serialize($action));
+        throw new \Exception('Failed to call callable');
+    }
+
+    /**
+     * @param string $verb
+     * @return array
+     */
+    private function routes($verb)
+    {
+        if (isset($this->routes[$verb])) {
+            $routes = $this->routes[$verb];
+        } else {
+            $routes = call_user_func_array('array_merge', $this->routes);
+        }
+
+        return $routes ?: [];
+    }
+
+    /**
+     * @param string $name
+     * @param array $args
+     */
+    public function __call($name, $args)
+    {
+        if ($name === 'any') {
+            foreach (['GET', 'POST', 'PUT', 'DELETE'] as $verb) {
+                $this->routes[$verb][$args[0]] = $args[1];
+            }
+        } else {
+            $this->routes[strtoupper($name)][$args[0]] = $args[1];
+        }
     }
 }
