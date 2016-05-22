@@ -4,3 +4,4 @@ res/
 tests/
 vendor/
 www/
+phpunit.xml
