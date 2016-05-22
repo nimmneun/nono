@@ -5,21 +5,21 @@
 // www/index.php
 require_once '../vendor/autoload.php';
 
-// Define routes using a closure ...
-$routes['/hello/{name}'] = function ($request, $name) {
+// Predefine routes using a closure ...
+$routes['GET']['/hello/{name}'] = function ($request, $name) {
     printf('Hello %s', $name);
 };
 
 // ... or the Controller::method style. 
-$routes['/hello/{name}'] = 'GreetingController::sayHello';
+$routes['GET']['/hello/{name}'] = 'GreetingController::sayHello';
 
-$app = new Nono\Application(
-    new Nono\Request(),
-    new Nono\Router($routes)
-);
+// ... or add them via get, post, put, delete ...
+$router = new Nono\Router($routes);
+$router->get('/hello/{name}', 'SomeController::hello');
+$router->post('/user/{id}', 'User::create');
+
+$app = new Nono\Application(new Nono\Request(), $router);
 
 // Send output to browser.
 $app->respond();
 ```
-
-... Application could probably be named Response ...
