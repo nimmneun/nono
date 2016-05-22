@@ -10,7 +10,7 @@ class RouterTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->router = new \Nono\Router();
-        $this->router->get('/profile/{name}', function ($request, $name) {
+        $this->router->get('/profile/{name}', function($request, $name) {
             return 'Hello ' . $name;
         });
     }
