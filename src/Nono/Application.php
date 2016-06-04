@@ -26,7 +26,7 @@ class Application
      */
     public function __construct($rootDir, Request $request, Router $router)
     {
-        define('APP_ROOT', dirname($rootDir));
+        define('APP_ROOT', realpath($rootDir));
         $this->router = $router;
         $this->request = $request;
     }
@@ -59,11 +59,11 @@ class Application
     }
 
     /**
-     * @return void
+     * @param bool $rerun
      */
-    public function respond()
+    public function respond($rerun = false)
     {
-        if ($this->content) {
+        if ($this->content && !$rerun) {
             echo $this->content;
         } else {
             echo $this->run();

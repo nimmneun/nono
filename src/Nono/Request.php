@@ -76,6 +76,11 @@ class Request
         return microtime(1) - $this->server('REQUEST_TIME_FLOAT');
     }
 
+    /**
+     * @param string $name
+     * @param array $args
+     * @return string|array|null
+     */
     public function __call($name, $args)
     {
         return isset($GLOBALS['_' . strtoupper($name)][$args[0]])
