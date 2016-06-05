@@ -15,7 +15,7 @@ class Router
     /**
      * @var array
      */
-    public $routes;
+    private $routes;
 
     /**
      * @param array $routes
@@ -62,7 +62,7 @@ class Router
      */
     private function pattern($route)
     {
-        return '~^' . preg_replace('~(\{[\w]+\})~', '(\w+)', $route) . '/?$~u';
+        return '~^' . preg_replace('~(\{[\w]+\})~', '([^/]+)', $route) . '/?$~u';
     }
 
     /**

@@ -39,6 +39,11 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($_SERVER['REQUEST_TIME_FLOAT'], $this->request->requestTimeFloat());
     }
 
+    public function testElapsedRequestTimeFloat()
+    {
+        $this->assertTrue(is_numeric($this->request->elapsedRequestTimeFloat()));
+    }
+
     public function testGet()
     {
         $this->assertEquals('settings', $this->request->get('show'));

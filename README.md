@@ -16,9 +16,13 @@ $routes['GET']['/hello/{name}'] = 'GreetingController::sayHello';
 // ... or add them via get, post, put, delete ...
 $router = new Nono\Router($routes);
 $router->get('/hello/{name}', 'SomeController::hello');
-$router->post('/user/{id}', 'User::create');
+$router->post('/user', 'User::create');
 
-$app = new Nono\Application(__DIR__, new Nono\Request(), $router);
+$app = new Nono\Application(
+    dirname(__DIR__),
+    new Nono\Request(),
+    $router
+);
 
 // Send output to browser.
 $app->respond();
