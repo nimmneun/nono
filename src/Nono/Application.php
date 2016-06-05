@@ -40,14 +40,6 @@ class Application
     }
 
     /**
-     * @return Router
-     */
-    public function router()
-    {
-        return $this->router;
-    }
-
-    /**
      * @return string
      * @throws \Exception
      */

@@ -49,8 +49,10 @@ class Router
     private function match($route, Request $request)
     {
         $matches = [];
-        if (preg_match($this->pattern($route), $request->uri(), $matches)) {
-            $matches[0] = $request;
+        if (substr_count($route, '/') == substr_count($request->uri(), '/')) {
+            if (preg_match($this->pattern($route), $request->uri(), $matches)) {
+                $matches[0] = $request;
+            }
         }
 
         return $matches;
