@@ -97,7 +97,7 @@ class Application
      */
     private function call($action, $params)
     {
-        if (is_callable($action)) {
+        if ($action instanceof \Closure) {
             $action(...$params);
         } elseif (is_string($action) && false !== strpos($action, '::')) {
             list($class, $method) = explode('::', $action);
