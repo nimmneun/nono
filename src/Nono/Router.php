@@ -2,14 +2,6 @@
 
 namespace Nono;
 
-/**
- * @method void get(string $route, string|Callable $action)
- * @method void post(string $route, string|Callable $action)
- * @method void put(string $route, string|Callable $action)
- * @method void patch(string $route, string|Callable $action)
- * @method void delete(string $route, string|Callable $action)
- * @method void any(string $route, string|Callable $action)
- */
 class Router
 {
     /**
@@ -18,98 +10,97 @@ class Router
     private $routes;
 
     /**
-     * @param array $routes
+     * @var string $verb
+     * @var string $route
+     * @var \Closure|string $action
      */
-    public function __construct(array $routes = [])
+    public function add($verb, $route, $action)
     {
-        $this->routes = $routes;
+        $this->routes[strtoupper($verb)][] = [
+            'route' => $this->pattern($route),
+            'action' => $action
+        ];
     }
 
     /**
-     * @param Request $request
-     * @return null
-     * @throws \Exception
+     * @var array $verbs
+     * @var string $route
+     * @var \Closure|string $action
      */
-    public function route(Request $request)
+    public function any(array $verbs, $route, $action)
     {
-        foreach ($this->routes($request->method()) as $route => $action) {
-            if ($params = $this->match($route, $request)) {
-                return $this->call($action, $params);
-            }
+        foreach ($verbs as $verb) {
+            $this->add($verb, $route, $action);
         }
-
-        throw new \Exception('Route ' . $request->uri() . ' not found!');
-    }
-
-    /**
-     * @param string $route
-     * @param Request $request
-     * @return array
-     */
-    private function match($route, Request $request)
-    {
-        $matches = [];
-        if (substr_count($route, '/') == substr_count($request->uri(), '/')) {
-            if (preg_match($this->pattern($route), $request->uri(), $matches)) {
-                $matches[0] = $request;
-            }
-        }
-
-        return $matches;
-    }
-
-    /**
-     * @param string $route
-     * @return string
-     */
-    private function pattern($route)
-    {
-        return '~^' . preg_replace('~(\{[\w]+\})~', '([^/]+)', $route) . '/?$~u';
-    }
-
-    /**
-     * @param $action
-     * @param array $params
-     * @return null
-     * @throws \Exception
-     */
-    private function call($action, $params)
-    {
-        if ($action instanceof \Closure) {
-            return $action(...$params);
-        }
-
-        if (is_string($action) && false !== strpos($action, '::')) {
-            list($class, $method) = explode('::', $action);
-            if (class_exists($class) && method_exists($class, $method)) {
-                return (new $class(array_shift($params)))->$method(...$params);
-            }
-        }
-
-        throw new \Exception('Failed to call callable');
     }
 
     /**
      * @param string $verb
+     * @param string $uri
+     * @return \Closure|string
+     * @throws \Exception
+     */
+    public function route($verb, $uri)
+    {
+        foreach (array_chunk($this->routes($verb), 22) as $routes) {
+            $match = $this->match($uri, $routes);
+            if (!empty($match)) {
+                return $match;
+            }
+        }
+
+        throw new \Exception('Route ' . $uri . ' not found');
+    }
+
+    /**
+     * @var string $verb
      * @return array
      */
     private function routes($verb)
     {
-        return isset($this->routes[$verb]) ? $this->routes[$verb] : [];
+        return isset($this->routes[strtoupper($verb)]) ? $this->routes[strtoupper($verb)] : [];
     }
 
     /**
-     * @param string $name
-     * @param array $args
+     * @param string $uri
+     * @param array $routes
+     * @return array
      */
-    public function __call($name, $args)
+    private function match($uri, $routes)
     {
-        if ($name === 'any') {
-            foreach (['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as $verb) {
-                $this->routes[$verb][$args[0]] = $args[1];
-            }
-        } else {
-            $this->routes[strtoupper($name)][$args[0]] = $args[1];
+        if (1 != preg_match($this->combine($routes), $uri, $m)) {
+            return [];
         }
+
+        $params = array_filter($m, function ($v) {
+            return 0 < strlen($v);
+        });
+        $action = $routes[count($m) - count($params)]['action'];
+
+        return [$action, $params];
+    }
+
+    /**
+     * @var string $verb
+     * @return string
+     */
+    private function pattern($str)
+    {
+        return preg_replace('~\{([a-zA-Z0-9]+)\}~', '([^/]+)', $str);
+    }
+
+    /**
+     * @var array $routes
+     * @return string
+     */
+    private function combine($routes)
+    {
+        $str = $mark = '';
+        foreach ($routes as $id => $data) {
+            $str .= '|' . $data['route'] . $mark;
+            $mark .= '()';
+        }
+
+        return '~^(?' . $str . ')$~x';
     }
 }

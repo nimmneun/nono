@@ -11,55 +11,35 @@ class RouterTest extends PHPUnit_Framework_TestCase
     {
         $this->router = new \Nono\Router();
 
-        $this->router->get('/profile/{name}', function($request, $name) {
-            return 'Hello ' . $name;
+        $this->router->add('GET', '/profile/{name}', function($request, $name) {
         });
-
-        $this->router->any('/products/{sku}/weight/{weight}', function($request, $sku, $weight) {
-            return $sku . '\'s weight set to '. $weight .' lbs';
+        $this->router->any(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+            '/products/{sku}/weight/{weight}', function($request, $sku, $weight) {
         });
-
-        $this->router->get('/', 'Nono\Request::requestTimeFloat');
-        $this->router->get('/nope', 'NoValidClass::index');
+        $this->router->add('GET', '/', 'Nono\Request::requestTimeFloat');
+        $this->router->add('GET', '/nope', 'NoValidClass::index');
     }
 
     public function testExistingRoutes()
     {
-        $_SERVER['REQUEST_URI'] = '/profile/Harry';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $response = $this->router->route(new \Nono\Request());
-        $this->assertEquals('Hello Harry', $response);
+        $response = $this->router->route('GET', '/profile/Harry');
+        $this->assertNotEmpty($response);
+        $this->assertCount(2, array_filter($response));
 
-        $_SERVER['REQUEST_URI'] = '/products/ABC123/weight/2.5';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $response = $this->router->route(new \Nono\Request());
-        $this->assertEquals('ABC123\'s weight set to 2.5 lbs', $response);
+        $response = $this->router->route('GET', '/products/ABC123/weight/2.5');
+        $this->assertEquals('ABC123', $response[1][1]);
+        $this->assertEquals('2.5', $response[1][2]);
 
-        $_SERVER['REQUEST_URI'] = '/';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $response = $this->router->route(new \Nono\Request());
-        $this->assertEquals($_SERVER['REQUEST_TIME_FLOAT'], $response);
+        $response = $this->router->route('GET', '/');
+        $this->assertEquals('Nono\Request::requestTimeFloat', $response[0]);
     }
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessage Route /some/invalid/route not found!
+     * @expectedExceptionMessage Route /some/invalid/route not found
      */
     public function testInvalidRoute()
     {
-        $_SERVER['REQUEST_URI'] = '/some/invalid/route';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $this->router->route(new \Nono\Request());
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Failed to call callable
-     */
-    public function testInvalidClass()
-    {
-        $_SERVER['REQUEST_URI'] = '/nope';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $this->router->route(new \Nono\Request());
+        $this->router->route('GET', '/some/invalid/route');
     }
 }
