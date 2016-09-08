@@ -78,7 +78,7 @@ class Request
 
     /**
      * @param string $name
-     * @param array $args
+     * @param array  $args
      * @return string|array|null
      */
     public function __call($name, $args)

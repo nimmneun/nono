@@ -10,8 +10,8 @@ class Router
     private $routes;
 
     /**
-     * @var string $verb
-     * @var string $route
+     * @var string          $verb
+     * @var string          $route
      * @var \Closure|string $action
      */
     public function add($verb, $route, $action)
@@ -23,8 +23,8 @@ class Router
     }
 
     /**
-     * @var array $verbs
-     * @var string $route
+     * @var array           $verbs
+     * @var string          $route
      * @var \Closure|string $action
      */
     public function any(array $verbs, $route, $action)
@@ -42,7 +42,7 @@ class Router
      */
     public function route($verb, $uri)
     {
-        foreach (array_chunk($this->routes($verb), 22) as $routes) {
+        foreach (array_chunk($this->routes($verb), 20) as $routes) {
             $match = $this->match($uri, $routes);
             if (!empty($match)) {
                 return $match;
@@ -63,7 +63,7 @@ class Router
 
     /**
      * @param string $uri
-     * @param array $routes
+     * @param array  $routes
      * @return array
      */
     private function match($uri, $routes)
@@ -90,6 +90,8 @@ class Router
     }
 
     /**
+     * Grouped patterns thanks to nikic's blog post - you rock =)
+     *
      * @var array $routes
      * @return string
      */

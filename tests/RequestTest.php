@@ -33,6 +33,11 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('dummy.dev', $this->request->host());
     }
 
+    public function testMethod()
+    {
+        $this->assertEquals('GET', $this->request->method());
+    }
+
     public function testRequestTimeFloat()
     {
         $this->assertTrue(is_numeric($this->request->requestTimeFloat()));

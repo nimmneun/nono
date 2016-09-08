@@ -2,6 +2,12 @@
 
 namespace Nono;
 
+/**
+ * Class Application - because everyone and their grandmother
+ * rolls his own framework. Since I'm lazy this is rather minimal. =)
+ *
+ * @package Nono
+ */
 class Application
 {
     /**
@@ -15,37 +21,17 @@ class Application
     private $request;
 
     /**
-     * @param $router
-     * @param $request
+     * @param Router $router
+     * @param Request $request
      */
-    public function __construct($router = null, $request = null)
+    public function __construct(Router $router = null, Request $request = null)
     {
         $this->router = $router ?: new Router();
         $this->request = $request ?: new Request();
     }
 
     /**
-     * @return void
-     */
-    public function run()
-    {
-        ob_start();
-        try {
-            list($action, $params) = $this->router->route(
-                $this->request->method(), $this->request->uri()
-            );
-
-            $params[0] = $this->request;
-            $this->call($action, $params);
-        } catch (\Exception $e) {
-            $this->handleException($e);
-        }
-
-        echo ob_get_clean();
-    }
-
-    /**
-     * @param string $route
+     * @param string          $route
      * @param \Closure|string $action
      */
     public function get($route, $action)
@@ -54,7 +40,7 @@ class Application
     }
 
     /**
-     * @param string $route
+     * @param string          $route
      * @param \Closure|string $action
      */
     public function post($route, $action)
@@ -63,7 +49,7 @@ class Application
     }
 
     /**
-     * @param string $route
+     * @param string          $route
      * @param \Closure|string $action
      */
     public function put($route, $action)
@@ -72,7 +58,7 @@ class Application
     }
 
     /**
-     * @param string $route
+     * @param string          $route
      * @param \Closure|string $action
      */
     public function delete($route, $action)
@@ -81,8 +67,8 @@ class Application
     }
 
     /**
-     * @param array $verbs
-     * @param string $route
+     * @param array           $verbs
+     * @param string          $route
      * @param \Closure|string $action
      */
     public function any(array $verbs, $route, $action)
@@ -91,7 +77,7 @@ class Application
     }
 
     /**
-     * @param $action
+     * @param       $action
      * @param array $params
      * @throws \Exception
      */
@@ -110,11 +96,43 @@ class Application
     }
 
     /**
-     * Just echo the message for now
+     * Send content to browser.
+     */
+    public function respond()
+    {
+        echo $this->run();
+    }
+
+    /**
+     * Return response contents.
+     *
+     * @return string
+     */
+    public function run()
+    {
+        ob_start();
+        try {
+            list($action, $params) = $this->router->route(
+                $this->request->method(), $this->request->uri()
+            );
+
+            $params[0] = $this->request;
+            $this->call($action, $params);
+        } catch (\Exception $e) {
+            $this->handleException($e);
+        }
+
+        return ob_get_clean();
+    }
+
+    /**
+     * Just echo the message for now.
      *
      * @param \Exception $e
      */
-    private function handleException(\Exception $e) {
+    private function handleException(\Exception $e)
+    {
         echo PHP_EOL . $e->getMessage() . PHP_EOL;
     }
 }
+

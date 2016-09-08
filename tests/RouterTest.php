@@ -11,11 +11,11 @@ class RouterTest extends PHPUnit_Framework_TestCase
     {
         $this->router = new \Nono\Router();
 
-        $this->router->add('GET', '/profile/{name}', function($request, $name) {
+        $this->router->add('GET', '/profile/{name}', function ($request, $name) {
         });
         $this->router->any(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-            '/products/{sku}/weight/{weight}', function($request, $sku, $weight) {
-        });
+            '/products/{sku}/weight/{weight}', function ($request, $sku, $weight) {
+            });
         $this->router->add('GET', '/', 'Nono\Request::requestTimeFloat');
         $this->router->add('GET', '/nope', 'NoValidClass::index');
     }
