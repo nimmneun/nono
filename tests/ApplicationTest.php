@@ -29,7 +29,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testPut()
     {
-        $router = $this->createMock(\Nono\Router::class);
+        $router = $this->getMockBuilder(\Nono\Router::class)->getMock();
         $router
             ->expects($this->once())
             ->method('add')
@@ -62,7 +62,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
             ->method('any')
             ->with($this->equalTo(['DELETE', 'POST', 'PUT']), $this->equalTo('/user/{id}'),
                 $this->isInstanceOf(Closure::class));
-        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
+        $app = new \Nono\Application($router, $this->getMockBuilder(\Nono\Request::class)->getMock());
 
         $app->any(['DELETE', 'POST', 'PUT'], '/user/{id}', function () {
         });
