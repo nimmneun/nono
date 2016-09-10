@@ -8,10 +8,23 @@ namespace Nono;
  * @method string request(string $name)
  * @method string server(string $name)
  * @method string session(string $name)
+ * @method string cookie(string $name)
  * @method array files(string $name)
  */
 class Request
 {
+    /**
+     * Request constructor.
+     *
+     * @throws \Exception
+     */
+    public function __construct()
+    {
+        if (!isset($_SERVER)) {
+            throw new \Exception("Missing crucial superglobal");
+        }
+    }
+
     /**
      * @return string
      */

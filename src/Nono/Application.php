@@ -21,7 +21,7 @@ class Application
     private $request;
 
     /**
-     * @param Router $router
+     * @param Router  $router
      * @param Request $request
      */
     public function __construct(Router $router = null, Request $request = null)
@@ -85,10 +85,12 @@ class Application
     {
         if ($action instanceof \Closure) {
             $action(...$params);
-        } elseif (is_string($action) && false !== strpos($action, '::')) {
+        } elseif (is_string($action) && is_int(strpos($action, '::'))) {
             list($class, $method) = explode('::', $action);
             if (class_exists($class) && method_exists($class, $method)) {
                 (new $class(array_shift($params)))->$method(...$params);
+            } else {
+                throw new \Exception("Failed to call {$action}");
             }
         } else {
             throw new \Exception('Failed to call callable');
