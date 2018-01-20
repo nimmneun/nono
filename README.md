@@ -1,5 +1,7 @@
 # nono
+[![Build Status](https://travis-ci.org/nimmneun/nono.svg?branch=master)](https://travis-ci.org/nimmneun/nono)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nimmneun/nono/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nimmneun/nono/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/nimmneun/nono/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/nimmneun/nono/?branch=master)
 
 ```php
 <?php require_once '../vendor/autoload.php';
