@@ -18,8 +18,3 @@ $app->get('/{name}?', function ($request, $name = 'World') {
 // run app and generate output
 $app->respond();
 ```
-
-```
-/public
-/vendor
-```
