@@ -2,6 +2,11 @@
 
 namespace Nono;
 
+/**
+ * Relatively fast regex router. Placeholders in routes like e.g. {username}
+ * are replaced to match anything but a slash. A route like /user/{id}/
+ * would end up as the regex /user/([^/]+)/.
+ */
 class Router
 {
     /**
@@ -10,6 +15,8 @@ class Router
     private $routes;
 
     /**
+     * Add a route aimed at a specific http verb.
+     *
      * @var string          $verb
      * @var string          $route
      * @var \Closure|string $action
@@ -23,6 +30,8 @@ class Router
     }
 
     /**
+     * Add a route for multiple http verbs [POST,PUT,GET,...].
+     *
      * @var array           $verbs
      * @var string          $route
      * @var \Closure|string $action
@@ -35,14 +44,16 @@ class Router
     }
 
     /**
+     * Route a given http verb and uri.
+     *
      * @param string $verb
      * @param string $uri
-     * @return \Closure|string
+     * @return array
      * @throws \Exception
      */
     public function route($verb, $uri)
     {
-        foreach (array_chunk($this->routes($verb), 20) as $routes) {
+        foreach (array_chunk($this->routes(strtoupper($verb)), 20) as $routes) {
             $match = $this->match($uri, $routes);
             if (!empty($match)) {
                 return $match;
@@ -53,35 +64,45 @@ class Router
     }
 
     /**
+     * Return the array of routes for the given http verb.
+     *
      * @var string $verb
      * @return array
      */
     private function routes($verb)
     {
-        return isset($this->routes[strtoupper($verb)]) ? $this->routes[strtoupper($verb)] : [];
+        return isset($this->routes[$verb]) ? $this->routes[$verb] : [];
     }
 
     /**
+     * Match a uri against several routes at once and return the associated
+     * action and any parameters detected in the uri.
+     * The returned action is the callback or class::method you've set.
+     *
      * @param string $uri
      * @param array  $routes
      * @return array
      */
     private function match($uri, $routes)
     {
-        if (1 != preg_match($this->combine($routes), $uri, $m)) {
+        if (!preg_match($this->combine($routes), $uri, $m)) {
             return [];
         }
 
         $params = array_filter($m, function ($v) {
             return 0 < strlen($v);
         });
-        $action = $routes[count($m) - count($params)]['action'];
+
+        $marker = count($m) - count($params);
+        $action = $routes[$marker]['action'];
 
         return [$action, $params];
     }
 
     /**
-     * @var string $verb
+     * Replace placeholders like {id} with a regex.
+     *
+     * @var string $str
      * @return string
      */
     private function pattern($str)
@@ -90,7 +111,9 @@ class Router
     }
 
     /**
-     * Grouped patterns thanks to nikic's blog post - you rock =)
+     * Grouped patterns thanks to nikic's blog post - you rock =).
+     * The empty groups () are basically abused as a counter, hence
+     * they mark a given route.
      *
      * @var array $routes
      * @return string

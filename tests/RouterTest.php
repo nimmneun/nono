@@ -23,15 +23,15 @@ class RouterTest extends PHPUnit_Framework_TestCase
     public function testExistingRoutes()
     {
         $response = $this->router->route('GET', '/profile/Harry');
-        $this->assertNotEmpty($response);
-        $this->assertCount(2, array_filter($response));
+        self::assertNotEmpty($response);
+        self::assertCount(2, array_filter($response));
 
         $response = $this->router->route('GET', '/products/ABC123/weight/2.5');
-        $this->assertEquals('ABC123', $response[1][1]);
-        $this->assertEquals('2.5', $response[1][2]);
+        self::assertEquals('ABC123', $response[1][1]);
+        self::assertEquals('2.5', $response[1][2]);
 
         $response = $this->router->route('GET', '/');
-        $this->assertEquals('Nono\Request::requestTimeFloat', $response[0]);
+        self::assertEquals('Nono\Request::requestTimeFloat', $response[0]);
     }
 
     /**
