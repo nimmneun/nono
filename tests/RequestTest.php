@@ -20,52 +20,62 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testUri()
     {
-        $this->assertEquals('/profile/123', $this->request->uri());
+        self::assertEquals('/profile/123', $this->request->uri());
     }
 
-    public function testUrl()
+    public function testIsHttps()
     {
-        $this->assertEquals('http://dummy.dev/profile/123', $this->request->url());
+        self::assertEquals(false, $this->request->isHttps());
     }
 
     public function testHost()
     {
-        $this->assertEquals('dummy.dev', $this->request->host());
+        self::assertEquals('dummy.dev', $this->request->host());
     }
 
     public function testMethod()
     {
-        $this->assertEquals('GET', $this->request->method());
+        self::assertEquals('GET', $this->request->method());
     }
 
     public function testRequestTimeFloat()
     {
-        $this->assertTrue(is_numeric($this->request->requestTimeFloat()));
-        $this->assertEquals($_SERVER['REQUEST_TIME_FLOAT'], $this->request->requestTimeFloat());
+        self::assertTrue(is_numeric($this->request->requestTimeFloat()));
+        self::assertEquals($_SERVER['REQUEST_TIME_FLOAT'], $this->request->requestTimeFloat());
     }
 
     public function testElapsedRequestTimeFloat()
     {
-        $this->assertTrue(is_numeric($this->request->elapsedRequestTimeFloat()));
+        self::assertTrue(is_numeric($this->request->elapsedRequestTimeFloat()));
     }
 
     public function testGet()
     {
-        $this->assertEquals('settings', $this->request->get('show'));
+        self::assertEquals('settings', $this->request->get('show'));
     }
 
     public function testPost()
     {
-        $this->assertEquals('settings', $this->request->post('show'));
+        self::assertEquals('settings', $this->request->post('show'));
     }
 
     public function testRequest()
     {
-        $this->assertEquals('settings', $this->request->request('show'));
+        self::assertEquals('settings', $this->request->request('show'));
     }
 
     public function testServer()
     {
-        $this->assertNotEmpty($this->request->server('REQUEST_TIME'));
+        self::assertNotEmpty($this->request->server('REQUEST_TIME'));
+    }
+
+    public function testServerWithDefaultValue()
+    {
+        self::assertEquals('default', $this->request->server('NOTHING_HERE', 'default'));
+    }
+
+    public function testServerWithoutArgument()
+    {
+        self::assertTrue(is_array($this->request->server()));
     }
 }

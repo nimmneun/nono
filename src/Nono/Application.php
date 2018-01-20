@@ -3,10 +3,8 @@
 namespace Nono;
 
 /**
- * Class Application - because everyone and their grandmother
- * rolls his own framework. Since I'm lazy this is rather minimal. =)
- *
- * @package Nono
+ * Because everyone and their grandmother rolls his own framework.
+ * Since I'm lazy this is rather minimal. =)
  */
 class Application
 {
@@ -21,13 +19,33 @@ class Application
     private $request;
 
     /**
-     * @param Router  $router
-     * @param Request $request
+     * @var Container
      */
-    public function __construct(Router $router = null, Request $request = null)
-    {
+    private $container;
+
+    /**
+     * @param Router    $router
+     * @param Request   $request
+     * @param Container $container
+     */
+    public function __construct(
+        Router $router = null,
+        Request $request = null,
+        Container $container = null
+    ) {
         $this->router = $router ?: new Router();
         $this->request = $request ?: new Request();
+        $this->container = $container ?: new Container();
+        $this->container['app'] = $this;
+        $this->container['request'] = $this->request;
+    }
+
+    /**
+     * @return Container
+     */
+    public function container()
+    {
+        return $this->container;
     }
 
     /**
@@ -77,27 +95,6 @@ class Application
     }
 
     /**
-     * @param       $action
-     * @param array $params
-     * @throws \Exception
-     */
-    private function call($action, $params)
-    {
-        if ($action instanceof \Closure) {
-            $action(...$params);
-        } elseif (is_string($action) && is_int(strpos($action, '::'))) {
-            list($class, $method) = explode('::', $action);
-            if (class_exists($class) && method_exists($class, $method)) {
-                (new $class(array_shift($params)))->$method(...$params);
-            } else {
-                throw new \Exception("Failed to call {$action}");
-            }
-        } else {
-            throw new \Exception('Failed to call callable');
-        }
-    }
-
-    /**
      * Send content to browser.
      */
     public function respond()
@@ -128,13 +125,34 @@ class Application
     }
 
     /**
+     * @param \Closure|string $action
+     * @param array           $params
+     * @throws \Exception
+     */
+    private function call($action, $params)
+    {
+        if ($action instanceof \Closure) {
+            $action(...$params);
+        } elseif (is_string($action) && strpos($action, '::')) {
+            list($class, $method) = explode('::', $action);
+            if (class_exists($class) && method_exists($class, $method)) {
+                (new $class($this->container))->$method(...$params);
+            } else {
+                throw new \Exception("Failed to call {$action}");
+            }
+        } else {
+            throw new \Exception('Failed to call callable');
+        }
+    }
+
+    /**
      * Just echo the message for now.
      *
      * @param \Exception $e
      */
     private function handleException(\Exception $e)
     {
-        echo PHP_EOL . $e->getMessage() . PHP_EOL;
+        echo $e->getMessage();
     }
 }
 

@@ -2,18 +2,24 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nimmneun/nono/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nimmneun/nono/?branch=master)
 
 ```php
-// minimal www/index.php
+<?php require_once '../vendor/autoload.php';
 
-require_once '../vendor/autoload.php';
+// instantiate new app
+$app = new \Nono\Application();
 
-$app = new Nono\Application();
+// add route with controller::method action
+$app->post('/profile', 'ProfileController::create');
 
-// Define get/post/put ... routes using a closure ...
-$app->get('/{name}?', function ($request, $name = null) { echo "Welcome home " . $name; });
+// or using a closure as action
+$app->get('/{name}?', function ($request, $name = 'World') {
+    echo "Hello {$name}!";
+});
 
-// or using the Controller::method style.
-$app->get('/hello/{name}', 'GreetingController::sayHello');
-
-// Send outpout to browser / console.
+// run app and generate output
 $app->respond();
+```
+
+```
+/public
+/vendor
 ```

@@ -2,18 +2,21 @@
 
 namespace Nono;
 
+/**
+ * Container aware base controller.
+ */
 abstract class Controller
 {
     /**
-     * @var Request
+     * @var Container
      */
-    protected $request;
+    protected $container;
 
     /**
-     * @param Request $request
+     * @param Container $container
      */
-    public function __construct(Request $request)
+    public function __construct(Container $container)
     {
-        $this->request = $request;
+        $this->container = $container;
     }
 }
