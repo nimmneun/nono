@@ -3,8 +3,8 @@
 namespace Nono;
 
 /**
- * Because everyone and their grandmother rolls his own framework.
- * Since I'm lazy this is rather minimal. =)
+ * Because everyone and their grandmother rolls their own framework.
+ * Since I'm lazy this is rather minimal, but does to job. =)
  */
 class Application
 {
@@ -41,6 +41,8 @@ class Application
     }
 
     /**
+     * Return the di container.
+     *
      * @return Container
      */
     public function container()
@@ -49,6 +51,8 @@ class Application
     }
 
     /**
+     * Add new GET route.
+     *
      * @param string          $route
      * @param \Closure|string $action
      */
@@ -58,6 +62,8 @@ class Application
     }
 
     /**
+     * Add new POST route.
+     *
      * @param string          $route
      * @param \Closure|string $action
      */
@@ -67,6 +73,8 @@ class Application
     }
 
     /**
+     * Add new PUT route.
+     *
      * @param string          $route
      * @param \Closure|string $action
      */
@@ -76,6 +84,8 @@ class Application
     }
 
     /**
+     * Add new DELETE route.
+     *
      * @param string          $route
      * @param \Closure|string $action
      */
@@ -85,6 +95,8 @@ class Application
     }
 
     /**
+     * Add a route for several http verbs e.g. ['PUT', 'POST'].
+     *
      * @param array           $verbs
      * @param string          $route
      * @param \Closure|string $action
@@ -95,7 +107,7 @@ class Application
     }
 
     /**
-     * Send content to browser.
+     * Send content to browser/output.
      */
     public function respond()
     {

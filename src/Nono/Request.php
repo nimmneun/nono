@@ -3,7 +3,7 @@
 namespace Nono;
 
 /**
- * Simple request class which is passed as the first argument to
+ * Simple request class, which is passed as the first argument to
  * any callable / controller method associated with a route.
  *
  * @method string|mixed get(string $name = null, mixed $default = null)
@@ -37,6 +37,8 @@ class Request
     }
 
     /**
+     * Return the http verb.
+     *
      * @return string
      */
     public function method()
@@ -45,6 +47,9 @@ class Request
     }
 
     /**
+     * Return whether the request URL is HTTPS URL or not.
+     * Questionable reliability -> depends upon server config.
+     *
      * @return string
      */
     public function isHttps()
@@ -54,6 +59,8 @@ class Request
     }
 
     /**
+     * Return the hostname.
+     *
      * @return string
      */
     public function host()
@@ -62,6 +69,8 @@ class Request
     }
 
     /**
+     * Return the time the request was initiated.
+     *
      * @return float
      */
     public function requestTimeFloat()
@@ -70,6 +79,8 @@ class Request
     }
 
     /**
+     * Return the elapsed time since the request was initiated.
+     *
      * @return float
      */
     public function elapsedRequestTimeFloat()
