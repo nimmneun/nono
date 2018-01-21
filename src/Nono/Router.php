@@ -76,7 +76,7 @@ class Router
 
     /**
      * Match a uri against several routes at once and return the associated
-     * action and any parameters detected in the uri.
+     * action and any parameters matched in the uri.
      * The returned action is the callback or class::method you've set.
      *
      * @param string $uri
@@ -112,6 +112,7 @@ class Router
 
     /**
      * Grouped patterns thanks to nikic's blog post - you rock =).
+     * http://nikic.github.io/2014/02/18/Fast-request-routing-using-regular-expressions.html
      * The empty groups () are basically abused as a counter, hence
      * they mark a given route.
      *
