@@ -5,11 +5,11 @@ checks:
   php: true
 build:
   environment:
-    php: '7.1'
+    php: '5.6'
   tests:
     override:
       -
-        command: 'phpunit --coverage-clover=.coverage.tmp'
+        command: 'vendor/phpunit/phpunit/phpunit --coverage-clover=.coverage.tmp'
         coverage:
           file: '.coverage.tmp'
           format: 'clover'
