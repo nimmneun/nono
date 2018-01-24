@@ -17,6 +17,14 @@ namespace Nono;
 class Request
 {
     /**
+     * Just triggering the super global.
+     */
+    public function __construct()
+    {
+        $_SERVER;
+    }
+
+    /**
      * Return URI with query string.
      *
      * @return string

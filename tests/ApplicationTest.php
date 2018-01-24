@@ -4,24 +4,24 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 {
     public function testGet()
     {
-        $router = $this->getMock(\Nono\Router::class);
+        $router = $this->createMock(\Nono\Router::class);
         $router
             ->expects(self::once())
             ->method('add')
             ->with(self::equalTo('GET'), self::equalTo('/'), self::equalTo('PartyController::party'));
-        $app = new \Nono\Application($router, $this->getMock(\Nono\Request::class));
+        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
 
         $app->get('/', 'PartyController::party');
     }
 
     public function testPost()
     {
-        $router = $this->getMock(\Nono\Router::class);
+        $router = $this->createMock(\Nono\Router::class);
         $router
             ->expects(self::once())
             ->method('add')
             ->with(self::equalTo('POST'), self::equalTo('/'), self::isInstanceOf(Closure::class));
-        $app = new \Nono\Application($router, $this->getMock(\Nono\Request::class));
+        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
 
         $app->post('/', function () {
         });
@@ -29,12 +29,12 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testPut()
     {
-        $router = $this->getMock(\Nono\Router::class);
+        $router = $this->createMock(\Nono\Router::class);
         $router
             ->expects(self::once())
             ->method('add')
             ->with(self::equalTo('PUT'), self::equalTo('/user/{id}'), self::isInstanceOf(Closure::class));
-        $app = new \Nono\Application($router, $this->getMock(\Nono\Request::class));
+        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
 
         $app->put('/user/{id}', function () {
         });
@@ -42,12 +42,12 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testDelete()
     {
-        $router = $this->getMock(\Nono\Router::class);
+        $router = $this->createMock(\Nono\Router::class);
         $router
             ->expects(self::once())
             ->method('add')
             ->with(self::equalTo('DELETE'), self::equalTo('/user/{id}'), self::isInstanceOf(Closure::class));
-        $app = new \Nono\Application($router, $this->getMock(\Nono\Request::class));
+        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
 
         $app->delete('/user/{id}', function () {
         });
@@ -55,13 +55,13 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testAny()
     {
-        $router = $this->getMock(\Nono\Router::class);
+        $router = $this->createMock(\Nono\Router::class);
         $router
             ->expects(self::once())
             ->method('any')
             ->with(self::equalTo(['DELETE', 'POST', 'PUT']), self::equalTo('/user/{id}'),
                 self::isInstanceOf(Closure::class));
-        $app = new \Nono\Application($router, $this->getMock(\Nono\Request::class));
+        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
 
         $app->any(['DELETE', 'POST', 'PUT'], '/user/{id}', function () {
         });
