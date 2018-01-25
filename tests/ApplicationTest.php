@@ -72,6 +72,19 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(\Nono\Container::class, (new \Nono\Application())->container());
     }
 
+    public function testRespond()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '/hello';
+
+        $app = new \Nono\Application();
+        $app->get('/hello', function (\Nono\Request $request) {
+            echo 'hello';
+        });
+        self::expectOutputString('hello');
+        $app->respond();
+    }
+
     public function testRun()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';

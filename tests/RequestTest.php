@@ -49,6 +49,12 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         self::assertTrue(is_numeric($this->request->elapsedRequestTimeFloat()));
     }
 
+    public function testRedirect()
+    {
+        self::expectOutputString("<script>location.replace('/logout');</script>");
+        $this->request->redirect('/logout');
+    }
+
     public function testGet()
     {
         self::assertEquals('settings', $this->request->get('show'));

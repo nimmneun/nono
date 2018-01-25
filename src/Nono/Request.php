@@ -97,6 +97,17 @@ class Request
     }
 
     /**
+     * Allow redirects when headers have already been sent
+     * due to sessions or other output.
+     *
+     * @param string $url
+     */
+    public function redirect($url)
+    {
+        echo "<script>location.replace('$url');</script>";
+    }
+
+    /**
      * Magic method to access super globals with optional default argument.
      * Calling without arguments e.g. $request->server() will simply
      * return the entire _SERVER global.
