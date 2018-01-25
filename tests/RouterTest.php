@@ -1,15 +1,19 @@
 <?php
 
-class RouterTest extends PHPUnit_Framework_TestCase
+namespace Nono\Tests;
+
+use Nono\Router;
+
+class RouterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Nono\Router
+     * @var Router
      */
     protected $router;
 
     public function setUp()
     {
-        $this->router = new \Nono\Router();
+        $this->router = new Router();
 
         $this->router->add('GET', '/profile/{name}', function ($request, $name) {
         });
@@ -35,7 +39,7 @@ class RouterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \Exception
      * @expectedExceptionMessage Route /some/invalid/route not found
      */
     public function testInvalidRoute()

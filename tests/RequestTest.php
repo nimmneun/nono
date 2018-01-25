@@ -1,9 +1,13 @@
 <?php
 
+namespace Nono\Tests;
+
+use Nono\Request;
+
 class RequestTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Nono\Request
+     * @var Request
      */
     protected $request;
 
@@ -15,7 +19,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['HTTP_HOST'] = 'dummy.dev';
         $_REQUEST['show'] = $_GET['show'] = $_POST['show'] = 'settings';
-        $this->request = new Nono\Request();
+        $this->request = new Request();
     }
 
     public function testUri()
