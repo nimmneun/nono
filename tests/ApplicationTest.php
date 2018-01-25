@@ -1,27 +1,34 @@
 <?php
 
-class ApplicationTest extends PHPUnit_Framework_TestCase
+namespace Nono\Tests;
+
+use Nono\Application;
+use Nono\Container;
+use Nono\Request;
+use Nono\Router;
+
+class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
     public function testGet()
     {
-        $router = $this->createMock(\Nono\Router::class);
+        $router = $this->createMock(Router::class);
         $router
             ->expects(self::once())
             ->method('add')
             ->with(self::equalTo('GET'), self::equalTo('/'), self::equalTo('PartyController::party'));
-        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
+        $app = new Application($router, $this->createMock(Request::class));
 
         $app->get('/', 'PartyController::party');
     }
 
     public function testPost()
     {
-        $router = $this->createMock(\Nono\Router::class);
+        $router = $this->createMock(Router::class);
         $router
             ->expects(self::once())
             ->method('add')
-            ->with(self::equalTo('POST'), self::equalTo('/'), self::isInstanceOf(Closure::class));
-        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
+            ->with(self::equalTo('POST'), self::equalTo('/'), self::isInstanceOf(\Closure::class));
+        $app = new Application($router, $this->createMock(Request::class));
 
         $app->post('/', function () {
         });
@@ -29,12 +36,12 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testPut()
     {
-        $router = $this->createMock(\Nono\Router::class);
+        $router = $this->createMock(Router::class);
         $router
             ->expects(self::once())
             ->method('add')
-            ->with(self::equalTo('PUT'), self::equalTo('/user/{id}'), self::isInstanceOf(Closure::class));
-        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
+            ->with(self::equalTo('PUT'), self::equalTo('/user/{id}'), self::isInstanceOf(\Closure::class));
+        $app = new Application($router, $this->createMock(Request::class));
 
         $app->put('/user/{id}', function () {
         });
@@ -42,12 +49,12 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testDelete()
     {
-        $router = $this->createMock(\Nono\Router::class);
+        $router = $this->createMock(Router::class);
         $router
             ->expects(self::once())
             ->method('add')
-            ->with(self::equalTo('DELETE'), self::equalTo('/user/{id}'), self::isInstanceOf(Closure::class));
-        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
+            ->with(self::equalTo('DELETE'), self::equalTo('/user/{id}'), self::isInstanceOf(\Closure::class));
+        $app = new Application($router, $this->createMock(Request::class));
 
         $app->delete('/user/{id}', function () {
         });
@@ -55,13 +62,13 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testAny()
     {
-        $router = $this->createMock(\Nono\Router::class);
+        $router = $this->createMock(Router::class);
         $router
             ->expects(self::once())
             ->method('any')
             ->with(self::equalTo(['DELETE', 'POST', 'PUT']), self::equalTo('/user/{id}'),
-                self::isInstanceOf(Closure::class));
-        $app = new \Nono\Application($router, $this->createMock(\Nono\Request::class));
+                self::isInstanceOf(\Closure::class));
+        $app = new Application($router, $this->createMock(Request::class));
 
         $app->any(['DELETE', 'POST', 'PUT'], '/user/{id}', function () {
         });
@@ -69,7 +76,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testContainer()
     {
-        self::assertInstanceOf(\Nono\Container::class, (new \Nono\Application())->container());
+        self::assertInstanceOf(Container::class, (new Application())->container());
     }
 
     public function testRespond()
@@ -77,8 +84,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/hello';
 
-        $app = new \Nono\Application();
-        $app->get('/hello', function (\Nono\Request $request) {
+        $app = new Application();
+        $app->get('/hello', function (Request $request) {
             echo 'hello';
         });
         self::expectOutputString('hello');
@@ -90,8 +97,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/profile/123';
 
-        $app = new \Nono\Application();
-        $app->get('/profile/{id}', function (\Nono\Request $request, $id) {
+        $app = new Application();
+        $app->get('/profile/{id}', function (Request $request, $id) {
             echo $request->plainUri() . ' has id ' . $id;
         });
         self::assertEquals('/profile/123 has id 123', $app->run());
@@ -102,7 +109,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/dummy';
 
-        $app = new \Nono\Application();
+        $app = new Application();
         $app->get('/dummy', 'InvalidController::lol');
         self::assertEquals('Failed to call InvalidController::lol', $app->run());
     }
@@ -112,7 +119,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/dummy';
 
-        $app = new \Nono\Application();
+        $app = new Application();
         $app->get('/dummy', 'somethingIsMissing');
         self::assertEquals('Failed to call callable', $app->run());
     }
