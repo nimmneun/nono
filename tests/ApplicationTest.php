@@ -99,7 +99,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $app = new Application();
         $app->get('/profile/{id}', function (Request $request, $id) {
-            echo $request->plainUri() . ' has id ' . $id;
+            echo $request->uriWithQuery() . ' has id ' . $id;
         });
         self::assertEquals('/profile/123 has id 123', $app->run());
     }
