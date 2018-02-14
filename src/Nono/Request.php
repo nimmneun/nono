@@ -24,7 +24,7 @@ class Request
     {
         $_SERVER;
         if (!in_array($this->method(), ['GET', 'POST'])) {
-            parse_str(file_get_contents('php://input'), $GLOBALS['_QUERY']);
+            parse_str($this->content(), $GLOBALS['_QUERY']);
         }
     }
 
@@ -56,6 +56,16 @@ class Request
     public function method()
     {
         return $this->server('REQUEST_METHOD');
+    }
+
+    /**
+     * Return plain text request content.
+     *
+     * @return string
+     */
+    public function content()
+    {
+        return file_get_contents('php://input');
     }
 
     /**
