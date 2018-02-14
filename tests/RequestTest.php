@@ -27,6 +27,11 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         self::assertEquals('/profile/123', $this->request->uri());
     }
 
+    public function testUriWithQuery()
+    {
+        self::assertEquals('/profile/123?show=settings', $this->request->uriWithQuery());
+    }
+
     public function testIsHttps()
     {
         self::assertEquals(false, $this->request->isHttps());
