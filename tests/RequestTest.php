@@ -47,6 +47,12 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         self::assertEquals('GET', $this->request->method());
     }
 
+    public function testContentProducesNoError()
+    {
+        self::assertNotFalse($this->request->content());
+        self::assertNull(error_get_last());
+    }
+
     public function testRequestTimeFloat()
     {
         self::assertTrue(is_numeric($this->request->requestTimeFloat()));
