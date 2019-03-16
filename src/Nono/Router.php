@@ -69,7 +69,7 @@ class Router
      * @var string $verb
      * @return array
      */
-    private function routes($verb)
+    protected function routes($verb)
     {
         return isset($this->routes[$verb]) ? $this->routes[$verb] : [];
     }
@@ -83,7 +83,7 @@ class Router
      * @param array  $routes
      * @return array
      */
-    private function match($uri, $routes)
+    protected function match($uri, $routes)
     {
         if (!preg_match($this->combine($routes), $uri, $m)) {
             return [];
@@ -105,7 +105,7 @@ class Router
      * @var string $str
      * @return string
      */
-    private function pattern($str)
+    protected function pattern($str)
     {
         return preg_replace('~\{([a-zA-Z0-9]+)\}~', '([^/]+)', $str);
     }
@@ -119,7 +119,7 @@ class Router
      * @var array $routes
      * @return string
      */
-    private function combine($routes)
+    protected function combine($routes)
     {
         $str = $mark = '';
         foreach ($routes as $id => $data) {

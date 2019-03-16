@@ -141,7 +141,7 @@ class Application
      * @param array           $params
      * @throws \Exception
      */
-    private function call($action, $params)
+    protected function call($action, $params)
     {
         if ($action instanceof \Closure) {
             $action(...$params);
@@ -162,7 +162,7 @@ class Application
      *
      * @param \Exception $e
      */
-    private function handleException(\Exception $e)
+    protected function handleException(\Exception $e)
     {
         echo $e->getMessage();
     }
