@@ -11,17 +11,17 @@ class Application
     /**
      * @var Router
      */
-    private $router;
+    protected $router;
 
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
 
     /**
      * @var Container
      */
-    private $container;
+    protected $container;
 
     /**
      * @param Router    $router
