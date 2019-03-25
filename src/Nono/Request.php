@@ -8,6 +8,7 @@ namespace Nono;
  *
  * @method string|mixed get(string $name = null, mixed $default = null)
  * @method string|mixed post(string $name = null, mixed $default = null)
+ * @method string|mixed query(string $name = null, mixed $default = null)
  * @method string|mixed request(string $name = null, mixed $default = null)
  * @method string|mixed server(string $name = null, mixed $default = null)
  * @method string|mixed session(string $name = null, mixed $default = null)
@@ -17,11 +18,13 @@ namespace Nono;
 class Request
 {
     /**
-     * Just triggering the super global.
+     * Just triggering the super global and fill the query global.
      */
     public function __construct()
     {
         $_SERVER;
+        in_array($this->method(), ['GET', 'POST'])
+        || parse_str(file_get_contents('php://input'), $GLOBALS['_QUERY']);
     }
 
     /**
