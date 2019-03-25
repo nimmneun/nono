@@ -8,7 +8,6 @@ namespace Nono;
  *
  * @method string|mixed get(string $name = null, mixed $default = null)
  * @method string|mixed post(string $name = null, mixed $default = null)
- * @method string|mixed query(string $name = null, mixed $default = null)
  * @method string|mixed request(string $name = null, mixed $default = null)
  * @method string|mixed server(string $name = null, mixed $default = null)
  * @method string|mixed session(string $name = null, mixed $default = null)
@@ -18,16 +17,11 @@ namespace Nono;
 class Request
 {
     /**
-     * Just triggering the super global and fill the query global.
+     * Just triggering the super global.
      */
     public function __construct()
     {
         $_SERVER;
-        if (PHP_SAPI == 'cli') {
-            parse_str(implode('&', array_slice($this->server('argv'), 1)), $GLOBALS['_QUERY']);
-        } elseif (!in_array($this->method(), ['GET', 'POST'])) {
-            parse_str($this->content(), $GLOBALS['_QUERY']);
-        }
     }
 
     /**
@@ -146,4 +140,3 @@ class Request
         }
     }
 }
-
