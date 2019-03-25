@@ -23,11 +23,8 @@ class Request
     public function __construct()
     {
         $_SERVER;
-        if (PHP_SAPI == 'cli') {
-            parse_str(implode('&', array_slice($this->server('argv'), 1)), $GLOBALS['_QUERY']);
-        } elseif (!in_array($this->method(), ['GET', 'POST'])) {
-            parse_str($this->content(), $GLOBALS['_QUERY']);
-        }
+        in_array($this->method(), ['GET', 'POST'])
+        || parse_str(file_get_contents('php://input'), $GLOBALS['_QUERY']);
     }
 
     /**
@@ -146,4 +143,3 @@ class Request
         }
     }
 }
-
