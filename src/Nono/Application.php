@@ -28,49 +28,57 @@ class Application
         return $this->container;
     }
 
-    public function get(string $route, Closure|string $action): void
+    /**
+     * @param string $route
+     * @param Closure|string[] $action
+     */
+    public function get(string $route, Closure|array|string $action): void
     {
         $this->router->add('GET', $route, $action);
     }
 
-    public function post(string $route, Closure|string $action): void
+    /**
+     * @param string $route
+     * @param Closure|string[] $action
+     */
+    public function post(string $route, Closure|array|string $action): void
     {
         $this->router->add('POST', $route, $action);
     }
 
-    public function put(string $route, Closure|string $action): void
+    /**
+     * @param string $route
+     * @param Closure|string[] $action
+     */
+    public function put(string $route, Closure|array|string $action): void
     {
         $this->router->add('PUT', $route, $action);
     }
 
-    public function delete(string $route, Closure|string $action): void
+    /**
+     * @param string $route
+     * @param Closure|string[] $action
+     */
+    public function delete(string $route, Closure|array|string $action): void
     {
         $this->router->add('DELETE', $route, $action);
     }
 
     /**
      * Add a route for several http verbs e.g. ['PUT', 'POST'].
-     *
-     * @param string[] $verbs
-     * @param string $route
-     * @param Closure|string $action
      */
     public function any(array $verbs, string $route, Closure|string $action): void
     {
-        $this->router->any($verbs, $route, $action);
+        foreach ($verbs as $verb) {
+            $this->router->add($verb, $route, $action);
+        }
     }
 
-    /**
-     * Send content to browser/output.
-     */
     public function respond(): void
     {
         echo $this->run();
     }
 
-    /**
-     * Return response contents.
-     */
     public function run(): string
     {
         ob_start();
@@ -90,36 +98,34 @@ class Application
     }
 
     /**
-     * @param Closure|string $action
+     * @param Closure|string[] $action
      * @param array<int,mixed> $params
      * @throws Exception
      */
-    protected function call(Closure|string $action, array $params): void
+    protected function call(Closure|array|string $action, array $params): void
     {
         if ($action instanceof Closure) {
             $action(...$params);
             return;
         }
 
-        if (str_contains($action, '::')) {
-            [$class, $method] = explode('::', $action, 2);
-
-            if (class_exists($class) && method_exists($class, $method)) {
-                $this->container->make($class)->{$method}(...$params);
-                return;
+        if (is_scalar($action)) {
+            $action = explode('::', $action);
+            if (!isset($action[1])) {
+                throw new Exception("Failed to call action");
             }
-
-            throw new Exception("Failed to call {$action}");
         }
 
-        throw new Exception('Failed to call callable');
+        [$class, $method] = $action;
+
+        if (class_exists($class) && method_exists($class, $method)) {
+            $this->container->make($class)->{$method}(...$params);
+            return;
+        }
+
+        throw new Exception("Failed to call action");
     }
 
-    /**
-     * Just echo the message for now.
-     *
-     * @param Exception $e
-     */
     protected function handleException(Exception $e): void
     {
         echo $e->getMessage();

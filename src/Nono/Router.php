@@ -6,6 +6,7 @@ namespace nimmneun\Nono;
 
 use Closure;
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * Relatively fast regex router. Placeholders in routes like e.g. {username}
@@ -14,45 +15,21 @@ use Exception;
  */
 class Router
 {
-    /**
-     * @var array
-     */
-    private array $routes;
-
-    /**
-     * Add a route for multiple http verbs [POST,PUT,GET,...].
-     *
-     * @var array $verbs
-     * @var string $route
-     * @var Closure|string $action
-     */
-    public function any(array $verbs, string $route, Closure|string $action): void
-    {
-        foreach ($verbs as $verb) {
-            $this->add($verb, $route, $action);
-        }
-    }
+    private array $routes = [];
 
     /**
      * Add a route aimed at a specific http verb.
+     *
+     * @param string $verb
+     * @param string $route
+     * @param Closure|string[] $action
      */
-    public function add(string $verb, string $route, Closure|string $action): void
+    public function add(string $verb, string $route, Closure|array|string $action): void
     {
         $this->routes[strtoupper($verb)][] = [
             'route' => $this->pattern($route),
             'action' => $action,
         ];
-    }
-
-    /**
-     * Replace placeholders like {id} with a regex.
-     *
-     * @return string
-     * @var string $str
-     */
-    protected function pattern($str)
-    {
-        return preg_replace('~\{([a-zA-Z0-9]+)\}~', '([^/]+)', $str);
     }
 
     /**
@@ -73,6 +50,11 @@ class Router
         }
 
         throw new Exception('Route ' . $uri . ' not found');
+    }
+
+    protected function pattern(string $str): string
+    {
+        return preg_replace('~\{([a-zA-Z0-9]+)}~', '([^/]+)', $str);
     }
 
     /**
@@ -113,7 +95,7 @@ class Router
     protected function combine(array $routes): string
     {
         $str = $mark = '';
-        foreach ($routes as $id => $data) {
+        foreach ($routes as $data) {
             $str .= '|' . $data['route'] . $mark;
             $mark .= '()';
         }

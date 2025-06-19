@@ -81,10 +81,10 @@ class ApplicationTest extends TestCase
     {
         $router = $this->createMock(Router::class);
         $router
-            ->expects(self::once())
-            ->method('any')
+            ->expects(self::exactly(3))
+            ->method('add')
             ->with(
-                self::equalTo(['DELETE', 'POST', 'PUT']),
+                self::anything(),
                 self::equalTo('/user/{id}'),
                 self::isInstanceOf(\Closure::class),
             );
@@ -131,7 +131,7 @@ class ApplicationTest extends TestCase
 
         $app = new Application();
         $app->get('/dummy', 'InvalidController::lol');
-        self::assertEquals('Failed to call InvalidController::lol', $app->run());
+        self::assertEquals('Failed to call action', $app->run());
     }
 
     public function testRunWithInvalidCallable()
@@ -141,6 +141,6 @@ class ApplicationTest extends TestCase
 
         $app = new Application();
         $app->get('/dummy', 'somethingIsMissing');
-        self::assertEquals('Failed to call callable', $app->run());
+        self::assertEquals('Failed to call action', $app->run());
     }
 }

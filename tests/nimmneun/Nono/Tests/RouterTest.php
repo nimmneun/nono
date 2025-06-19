@@ -15,9 +15,12 @@ class RouterTest extends TestCase
 
         $this->router->add('GET', '/profile/{name}', function ($request, $name) {
         });
-        $this->router->any(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-            '/products/{sku}/weight/{weight}', function ($request, $sku, $weight) {
-            });
+        $this->router->add(
+            'GET',
+            '/products/{sku}/weight/{weight}',
+            function ($request, $sku, $weight) {
+            },
+        );
         $this->router->add('GET', '/', 'Nono\Request::requestTimeFloat');
         $this->router->add('GET', '/nope', 'NoValidClass::index');
     }
