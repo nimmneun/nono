@@ -1,28 +1,82 @@
 <?php
 
-namespace Nono;
+declare(strict_types=1);
 
-/**
- * Simple di container without the fancy.
- */
-class Container extends \ArrayObject
+namespace nimmneun\Nono;
+
+use ArrayObject;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionParameter;
+use RuntimeException;
+
+class Container extends ArrayObject
 {
-    /**
-     * @param string     $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get($key, $default = null)
+    public function bind(string $key, mixed $resolver): void
     {
-        return isset($this[$key]) ? $this[$key] : $default;
+        $this[$key] = $resolver;
     }
 
     /**
-     * @param string $key
-     * @return bool
+     * @throws ReflectionException
      */
-    public function has($key)
+    public function make(string $key): mixed
     {
-        return isset($this[$key]);
+        if (!$this->offsetExists($key)) {
+            return class_exists($key)
+                ? $this->autowire($key)
+                : null;
+        }
+
+        $entry = $this->offsetGet($key);
+
+        return is_callable($entry)
+            ? $entry($this)
+            : $entry;
+    }
+
+    /**
+     * Auto-wire a class by resolving its constructor dependencies.
+     * @throws ReflectionException
+     */
+    private function autowire(string $class): object
+    {
+        $ref = new ReflectionClass($class);
+        $ctor = $ref->getConstructor();
+
+        if ($ctor?->getNumberOfParameters() < 1) {
+            return $ref->newInstance();
+        }
+
+        $args = [];
+        foreach ($ctor->getParameters() as $param) {
+            $args[] = $this->resolveParameter($param);
+        }
+
+        return $ref->newInstanceArgs($args);
+    }
+
+    /**
+     * @throws RuntimeException
+     * @throws ReflectionException
+     */
+    private function resolveParameter(ReflectionParameter $param): mixed
+    {
+        $type = $param->getType();
+        if ($type && !$type->isBuiltin()) {
+            return $this->make($type->getName());
+        }
+
+        if ($param->isDefaultValueAvailable()) {
+            return $param->getDefaultValue();
+        }
+
+        throw new RuntimeException(
+            sprintf(
+                'Cannot resolve parameter $%s for %s',
+                $param->getName(),
+                $param->getDeclaringClass()->getName(),
+            ),
+        );
     }
 }

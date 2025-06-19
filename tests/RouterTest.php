@@ -1,17 +1,15 @@
 <?php
 
-namespace Nono\Tests;
+namespace nimmneun\Nono\Tests;
 
-use Nono\Router;
+use nimmneun\Nono\Router;
+use PHPUnit\Framework\TestCase;
 
-class RouterTest extends \PHPUnit_Framework_TestCase
+class RouterTest extends TestCase
 {
-    /**
-     * @var Router
-     */
-    protected $router;
+    protected Router $router;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->router = new Router();
 
@@ -38,12 +36,10 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         self::assertEquals('Nono\Request::requestTimeFloat', $result[0]);
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Route /some/invalid/route not found
-     */
     public function testInvalidRoute()
     {
+        $this->expectExceptionMessage("Route /some/invalid/route not found");
+        $this->expectException(\Exception::class);
         $this->router->route('GET', '/some/invalid/route');
     }
 }

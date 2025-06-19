@@ -1,6 +1,6 @@
 <?php
 
-namespace Nono;
+namespace nimmneun\Nono;
 
 /**
  * Simple request class, which is passed as the first argument to
@@ -28,13 +28,13 @@ class Request
     }
 
     /**
-     * Return URI with query string.
+     * Return the http verb.
      *
      * @return string
      */
-    public function uriWithQuery()
+    public function method()
     {
-        return urldecode($this->server('REQUEST_URI'));
+        return $this->server('REQUEST_METHOD');
     }
 
     /**
@@ -48,13 +48,13 @@ class Request
     }
 
     /**
-     * Return the http verb.
+     * Return URI with query string.
      *
      * @return string
      */
-    public function method()
+    public function uriWithQuery()
     {
-        return $this->server('REQUEST_METHOD');
+        return urldecode($this->server('REQUEST_URI'));
     }
 
     /**
@@ -126,7 +126,7 @@ class Request
      * return the entire _SERVER global.
      *
      * @param string $name
-     * @param array  $args
+     * @param array $args
      * @return mixed
      */
     public function __call($name, $args)

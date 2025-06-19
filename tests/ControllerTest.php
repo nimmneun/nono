@@ -1,14 +1,22 @@
 <?php
 
-namespace Nono\Tests;
+namespace nimmneun\Nono\Tests;
 
-use Nono\Container;
+use nimmneun\Nono\Container;
+use nimmneun\Nono\Controller;
+use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\TestCase;
 
-class ControllerTest extends \PHPUnit_Framework_TestCase
+class ControllerTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     public function testConcreteMethod()
     {
-        $stub = $this->getMockForAbstractClass('Nono\Controller', [new Container()]);
-        self::assertInstanceOf('Nono\Controller', $stub);
+        $stub = $this->getMockBuilder(Controller::class)
+            ->setConstructorArgs([new Container()])
+            ->getMock();
+        self::assertInstanceOf('nimmneun\Nono\Controller', $stub);
     }
 }

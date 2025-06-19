@@ -1,20 +1,21 @@
 <?php
 
-namespace Nono\Tests;
+namespace nimmneun\Nono\Tests;
 
-use Nono\Container;
+use nimmneun\Nono\Container;
+use PHPUnit\Framework\TestCase;
 
-class ContainerTest extends \PHPUnit_Framework_TestCase
+class ContainerTest extends TestCase
 {
-    public function testGet()
+    public function testOffsetGet()
     {
         $container = new Container(['dummy' => 'dummy']);
-        self::assertEquals('dummy', $container->get('dummy'));
+        self::assertEquals('dummy', $container->offsetGet('dummy'));
     }
 
-    public function testHas()
+    public function testOffsetExists()
     {
         $container = new Container(['dummy' => 'dummy']);
-        self::assertTrue(true, $container->has('dummy'));
+        self::assertTrue($container->offsetExists('dummy'));
     }
 }

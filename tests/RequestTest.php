@@ -1,17 +1,15 @@
 <?php
 
-namespace Nono\Tests;
+namespace nimmneun\Nono\Tests;
 
-use Nono\Request;
+use nimmneun\Nono\Request;
+use PHPUnit\Framework\TestCase;
 
-class RequestTest extends \PHPUnit_Framework_TestCase
+class RequestTest extends TestCase
 {
-    /**
-     * @var Request
-     */
-    protected $request;
+    protected Request $request;
 
-    public function setUp()
+    public function setUp(): void
     {
         $_SERVER['REQUEST_URI'] = '/profile/123?show=settings';
         $_SERVER['QUERY_STRING'] = 'show=settings';
@@ -34,7 +32,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testIsHttps()
     {
-        self::assertEquals(false, $this->request->isHttps());
+        self::assertFalse($this->request->isHttps());
     }
 
     public function testHost()

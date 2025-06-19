@@ -7,7 +7,7 @@
 <?php require_once '../vendor/autoload.php';
 
 // instantiate new app
-$app = new \Nono\Application();
+$app = new \nimmneun\Nono\Application();
 
 // add route with controller::method action
 $app->post('/profile', 'ProfileController::create');

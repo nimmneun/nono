@@ -1,6 +1,11 @@
 <?php
 
-namespace Nono;
+declare(strict_types=1);
+
+namespace nimmneun\Nono;
+
+use Closure;
+use Exception;
 
 /**
  * Because everyone and their grandmother rolls their own framework.
@@ -8,88 +13,37 @@ namespace Nono;
  */
 class Application
 {
-    /**
-     * @var Router
-     */
-    protected $router;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * @param Router    $router
-     * @param Request   $request
-     * @param Container $container
-     */
     public function __construct(
-        Router $router = null,
-        Request $request = null,
-        Container $container = null
+        protected ?Router $router = null,
+        protected ?Request $request = null,
+        protected ?Container $container = null,
     ) {
-        $this->router = $router ?: new Router();
-        $this->request = $request ?: new Request();
-        $this->container = $container ?: new Container();
-        $this->container['app'] = $this;
-        $this->container['request'] = $this->request;
+        $this->router = $router ?? new Router();
+        $this->request = $request ?? new Request();
+        $this->container = $container ?? new Container();
     }
 
-    /**
-     * Return the di container.
-     *
-     * @return Container
-     */
-    public function container()
+    public function container(): Container
     {
         return $this->container;
     }
 
-    /**
-     * Add new GET route.
-     *
-     * @param string          $route
-     * @param \Closure|string $action
-     */
-    public function get($route, $action)
+    public function get(string $route, Closure|string $action): void
     {
         $this->router->add('GET', $route, $action);
     }
 
-    /**
-     * Add new POST route.
-     *
-     * @param string          $route
-     * @param \Closure|string $action
-     */
-    public function post($route, $action)
+    public function post(string $route, Closure|string $action): void
     {
         $this->router->add('POST', $route, $action);
     }
 
-    /**
-     * Add new PUT route.
-     *
-     * @param string          $route
-     * @param \Closure|string $action
-     */
-    public function put($route, $action)
+    public function put(string $route, Closure|string $action): void
     {
         $this->router->add('PUT', $route, $action);
     }
 
-    /**
-     * Add new DELETE route.
-     *
-     * @param string          $route
-     * @param \Closure|string $action
-     */
-    public function delete($route, $action)
+    public function delete(string $route, Closure|string $action): void
     {
         $this->router->add('DELETE', $route, $action);
     }
@@ -97,11 +51,11 @@ class Application
     /**
      * Add a route for several http verbs e.g. ['PUT', 'POST'].
      *
-     * @param array           $verbs
-     * @param string          $route
-     * @param \Closure|string $action
+     * @param string[] $verbs
+     * @param string $route
+     * @param Closure|string $action
      */
-    public function any(array $verbs, $route, $action)
+    public function any(array $verbs, string $route, Closure|string $action): void
     {
         $this->router->any($verbs, $route, $action);
     }
@@ -109,27 +63,26 @@ class Application
     /**
      * Send content to browser/output.
      */
-    public function respond()
+    public function respond(): void
     {
         echo $this->run();
     }
 
     /**
      * Return response contents.
-     *
-     * @return string
      */
-    public function run()
+    public function run(): string
     {
         ob_start();
         try {
-            list($action, $params) = $this->router->route(
-                $this->request->method(), $this->request->uri()
+            [$action, $params] = $this->router->route(
+                $this->request->method(),
+                $this->request->uri(),
             );
 
             $params[0] = $this->request;
             $this->call($action, $params);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->handleException($e);
         }
 
@@ -137,34 +90,38 @@ class Application
     }
 
     /**
-     * @param \Closure|string $action
-     * @param array           $params
-     * @throws \Exception
+     * @param Closure|string $action
+     * @param array<int,mixed> $params
+     * @throws Exception
      */
-    protected function call($action, $params)
+    protected function call(Closure|string $action, array $params): void
     {
-        if ($action instanceof \Closure) {
+        if ($action instanceof Closure) {
             $action(...$params);
-        } elseif (is_string($action) && strpos($action, '::')) {
-            list($class, $method) = explode('::', $action);
-            if (class_exists($class) && method_exists($class, $method)) {
-                (new $class($this->container))->$method(...$params);
-            } else {
-                throw new \Exception("Failed to call {$action}");
-            }
-        } else {
-            throw new \Exception('Failed to call callable');
+            return;
         }
+
+        if (str_contains($action, '::')) {
+            [$class, $method] = explode('::', $action, 2);
+
+            if (class_exists($class) && method_exists($class, $method)) {
+                $this->container->make($class)->{$method}(...$params);
+                return;
+            }
+
+            throw new Exception("Failed to call {$action}");
+        }
+
+        throw new Exception('Failed to call callable');
     }
 
     /**
      * Just echo the message for now.
      *
-     * @param \Exception $e
+     * @param Exception $e
      */
-    protected function handleException(\Exception $e)
+    protected function handleException(Exception $e): void
     {
         echo $e->getMessage();
     }
 }
-

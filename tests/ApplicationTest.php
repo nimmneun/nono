@@ -1,14 +1,19 @@
 <?php
 
-namespace Nono\Tests;
+namespace nimmneun\Nono\Tests;
 
-use Nono\Application;
-use Nono\Container;
-use Nono\Request;
-use Nono\Router;
+use nimmneun\Nono\Application;
+use nimmneun\Nono\Container;
+use nimmneun\Nono\Request;
+use nimmneun\Nono\Router;
+use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\TestCase;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     public function testGet()
     {
         $router = $this->createMock(Router::class);
@@ -21,6 +26,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app->get('/', 'PartyController::party');
     }
 
+    /**
+     * @throws Exception
+     */
     public function testPost()
     {
         $router = $this->createMock(Router::class);
@@ -34,6 +42,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         });
     }
 
+    /**
+     * @throws Exception
+     */
     public function testPut()
     {
         $router = $this->createMock(Router::class);
@@ -47,6 +58,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         });
     }
 
+    /**
+     * @throws Exception
+     */
     public function testDelete()
     {
         $router = $this->createMock(Router::class);
@@ -60,14 +74,20 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         });
     }
 
+    /**
+     * @throws Exception
+     */
     public function testAny()
     {
         $router = $this->createMock(Router::class);
         $router
             ->expects(self::once())
             ->method('any')
-            ->with(self::equalTo(['DELETE', 'POST', 'PUT']), self::equalTo('/user/{id}'),
-                self::isInstanceOf(\Closure::class));
+            ->with(
+                self::equalTo(['DELETE', 'POST', 'PUT']),
+                self::equalTo('/user/{id}'),
+                self::isInstanceOf(\Closure::class),
+            );
         $app = new Application($router, $this->createMock(Request::class));
 
         $app->any(['DELETE', 'POST', 'PUT'], '/user/{id}', function () {

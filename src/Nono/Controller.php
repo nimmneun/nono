@@ -1,22 +1,13 @@
 <?php
 
-namespace Nono;
+declare(strict_types=1);
 
-/**
- * Container aware base controller.
- */
+namespace nimmneun\Nono;
+
 abstract class Controller
 {
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * @param Container $container
-     */
-    public function __construct(Container $container)
+    public function __construct(protected ?Container $container = null)
     {
-        $this->container = $container;
+        $this->container = $container ?? new Container();
     }
 }
