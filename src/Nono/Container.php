@@ -19,23 +19,23 @@ class Container extends ArrayObject
         return $this->make($key);
     }
 
-    public function bind(string $id, mixed $resolver): void
+    public function bind(string $key, mixed $resolver): void
     {
-        $this[$id] = $resolver;
+        $this[$key] = $resolver;
     }
 
     /**
      * @throws ReflectionException
      */
-    public function make(string $id): mixed
+    public function make(string $key): mixed
     {
-        if (!parent::offsetExists($id)) {
-            return class_exists($id)
-                ? $this->autowire($id)
+        if (!parent::offsetExists($key)) {
+            return class_exists($key)
+                ? $this->autowire($key)
                 : null;
         }
 
-        $entry = parent::offsetGet($id);
+        $entry = parent::offsetGet($key);
 
         return is_callable($entry)
             ? $entry($this)
@@ -68,7 +68,7 @@ class Container extends ArrayObject
     protected function resolveParameter(ReflectionParameter $param): mixed
     {
         $type = $param->getType();
-        if ($type && !$type->isBuiltin()) {
+        if ($type && method_exists($type, 'isBuiltin') && !$type->isBuiltin()) {
             return $this->make($type->getName());
         }
 
