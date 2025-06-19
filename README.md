@@ -9,7 +9,10 @@
 // instantiate new app
 $app = new \nimmneun\Nono\Application();
 
-// add route with controller::method action
+// add route with [controller::class, method] action
+$app->post('/profile', [ProfileController::class, 'create']);
+
+// add route with controller::method action (deprecated!)
 $app->post('/profile', 'ProfileController::create');
 
 // or using a closure as action

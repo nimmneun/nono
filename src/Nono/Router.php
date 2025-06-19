@@ -15,7 +15,7 @@ use JetBrains\PhpStorm\ArrayShape;
  */
 class Router
 {
-    private array $routes = [];
+    protected array $routes = [];
 
     /**
      * Add a route aimed at a specific http verb.

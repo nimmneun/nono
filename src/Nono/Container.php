@@ -45,7 +45,7 @@ class Container extends ArrayObject
     /**
      * @throws ReflectionException
      */
-    private function autowire(string $class): object
+    protected function autowire(string $class): object
     {
         $ref = new ReflectionClass($class);
         $ctor = $ref->getConstructor();
@@ -65,7 +65,7 @@ class Container extends ArrayObject
     /**
      * @throws ReflectionException
      */
-    private function resolveParameter(ReflectionParameter $param): mixed
+    protected function resolveParameter(ReflectionParameter $param): mixed
     {
         $type = $param->getType();
         if ($type && !$type->isBuiltin()) {
