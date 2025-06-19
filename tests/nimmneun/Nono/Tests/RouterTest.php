@@ -2,6 +2,7 @@
 
 namespace nimmneun\Nono\Tests;
 
+use nimmneun\Nono\Request;
 use nimmneun\Nono\Router;
 use PHPUnit\Framework\TestCase;
 
@@ -13,15 +14,10 @@ class RouterTest extends TestCase
     {
         $this->router = new Router();
 
-        $this->router->add('GET', '/profile/{name}', function ($request, $name) {
-        });
-        $this->router->add(
-            'GET',
-            '/products/{sku}/weight/{weight}',
-            function ($request, $sku, $weight) {
-            },
-        );
-        $this->router->add('GET', '/', 'Nono\Request::requestTimeFloat');
+        $this->router->add('GET', '/profile/{name}', fn($request, $name) => null);
+        $this->router->add('GET', '/products/{sku}/weight/{weight}', fn($request, $sku, $weight) => null);
+        $this->router->add('GET', '/', [Request::class, 'requestTimeFloat']);
+        $this->router->add('GET', '/old', 'Nono\Request::requestTimeFloat');
         $this->router->add('GET', '/nope', 'NoValidClass::index');
     }
 
@@ -36,6 +32,9 @@ class RouterTest extends TestCase
         self::assertEquals('2.5', $result[1][2]);
 
         $result = $this->router->route('GET', '/');
+        self::assertEquals([Request::class, 'requestTimeFloat'], $result[0]);
+
+        $result = $this->router->route('GET', '/old');
         self::assertEquals('Nono\Request::requestTimeFloat', $result[0]);
     }
 
