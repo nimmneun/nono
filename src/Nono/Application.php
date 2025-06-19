@@ -76,7 +76,7 @@ class Application
         ob_start();
         try {
             [$action, $params] = $this->router->route(
-                $this->request->method(),
+                $this->request->verb(),
                 $this->request->uri(),
             );
 

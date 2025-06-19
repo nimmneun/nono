@@ -42,7 +42,7 @@ class RequestTest extends TestCase
 
     public function testMethod()
     {
-        self::assertEquals('GET', $this->request->method());
+        self::assertEquals('GET', $this->request->verb());
     }
 
     public function testContentProducesNoError()

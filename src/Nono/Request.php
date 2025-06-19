@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace nimmneun\Nono;
 
 /**
@@ -23,46 +25,38 @@ class Request
     public function __construct()
     {
         $_SERVER;
-        in_array($this->method(), ['GET', 'POST'])
+        in_array($this->verb(), ['GET', 'POST'])
         || parse_str(file_get_contents('php://input'), $GLOBALS['_QUERY']);
     }
 
     /**
      * Return the http verb.
-     *
-     * @return string
      */
-    public function method()
+    public function verb(): ?string
     {
         return $this->server('REQUEST_METHOD');
     }
 
     /**
      * Return URI without query string.
-     *
-     * @return string
      */
-    public function uri()
+    public function uri(): string
     {
-        return explode('?', $this->uriWithQuery())[0];
+        return explode('?', $this->uriWithQuery())[0] ?? '';
     }
 
     /**
      * Return URI with query string.
-     *
-     * @return string
      */
-    public function uriWithQuery()
+    public function uriWithQuery(): string
     {
         return urldecode($this->server('REQUEST_URI'));
     }
 
     /**
      * Return plain text request content.
-     *
-     * @return string
      */
-    public function content()
+    public function content(): string
     {
         return file_get_contents('php://input');
     }
@@ -70,52 +64,42 @@ class Request
     /**
      * Return whether the request URL is HTTPS URL or not.
      * Questionable reliability -> depends upon server config.
-     *
-     * @return string
      */
-    public function isHttps()
+    public function isHttps(): bool
     {
-        return $this->server('SERVER_PORT') == 443
-            || strtoupper($this->server('HTTPS')) == 'ON';
+        return (int)$this->server('SERVER_PORT') === 443
+            || strtoupper((string)$this->server('HTTPS')) === 'ON';
     }
 
     /**
      * Return the hostname.
-     *
-     * @return string
      */
-    public function host()
+    public function host(): string
     {
         return $this->server('HTTP_HOST');
     }
 
     /**
      * Return the time the request was initiated.
-     *
-     * @return float
      */
-    public function requestTimeFloat()
+    public function requestTimeFloat(): float
     {
         return $this->server('REQUEST_TIME_FLOAT');
     }
 
     /**
      * Return the elapsed time since the request was initiated.
-     *
-     * @return float
      */
-    public function elapsedRequestTimeFloat()
+    public function elapsedRequestTimeFloat(): float
     {
-        return microtime(1) - $this->server('REQUEST_TIME_FLOAT');
+        return microtime(true) - $this->server('REQUEST_TIME_FLOAT');
     }
 
     /**
      * Allow redirects when headers have already been sent
      * due to sessions or other output.
-     *
-     * @param string $url
      */
-    public function redirect($url)
+    public function redirect(string $url): void
     {
         echo "<script>location.replace('$url');</script>";
     }
@@ -124,15 +108,11 @@ class Request
      * Magic method to access super globals with optional default argument.
      * Calling without arguments e.g. $request->server() will simply
      * return the entire _SERVER global.
-     *
-     * @param string $name
-     * @param array $args
-     * @return mixed
      */
-    public function __call($name, $args)
+    public function __call(string $name, array $args): mixed
     {
         $global = $GLOBALS['_' . strtoupper($name)];
-        $default = isset($args[1]) ? $args[1] : null;
+        $default = $args[1] ?? null;
 
         if (!count($args)) {
             return $global;
