@@ -5,3 +5,4 @@ vendor/
 www/
 var/
 composer.lock
+.phpunit.result.cache
