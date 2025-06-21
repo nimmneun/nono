@@ -11,6 +11,12 @@ use ReflectionParameter;
 
 class Container extends ArrayObject
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->bind(self::class, $this);
+    }
+
     /**
      * @throws ReflectionException
      */
@@ -19,9 +25,10 @@ class Container extends ArrayObject
         return $this->make($key);
     }
 
-    public function bind(string $key, mixed $resolver): void
+    public function bind(string $key, mixed $resolver): self
     {
         $this[$key] = $resolver;
+        return $this;
     }
 
     /**
