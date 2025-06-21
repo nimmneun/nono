@@ -11,9 +11,12 @@ use ReflectionParameter;
 
 class Container extends ArrayObject
 {
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        array $array = [],
+        int $flags = 0,
+        string $iteratorClass = "ArrayIterator",
+    ) {
+        parent::__construct($array, $flags, $iteratorClass);
         $this->bind(self::class, $this);
     }
 
