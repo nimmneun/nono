@@ -19,4 +19,16 @@ class ControllerTest extends TestCase
             ->getMock();
         self::assertInstanceOf('nimmneun\Nono\Controller', $stub);
     }
+
+    public function testSimpleExtendedControllerView(): void
+    {
+        $class = new class extends Controller {
+            public function render(string $template, array $data = []): string
+            {
+                return $this->view->render($template, $data);
+            }
+        };
+
+        self::assertSame('<p>hello Bob</p>', $class->render('<p>hello Bob</p>'));
+    }
 }
