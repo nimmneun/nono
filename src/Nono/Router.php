@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace nimmneun\Nono;
 
-use Closure;
 use Exception;
-use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * Relatively fast regex router. Placeholders in routes like e.g. {username}
@@ -22,9 +20,9 @@ class Router
      *
      * @param string $verb
      * @param string $route
-     * @param Closure|string[] $action
+     * @param callable|string[] $action
      */
-    public function add(string $verb, string $route, Closure|array|string $action): void
+    public function add(string $verb, string $route, callable|array $action): void
     {
         $this->routes[strtoupper($verb)][] = [
             'route' => $this->pattern($route),

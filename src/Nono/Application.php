@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace nimmneun\Nono;
 
-use Closure;
 use Exception;
 
 /**
@@ -30,36 +29,36 @@ class Application
 
     /**
      * @param string $route
-     * @param Closure|string[] $action
+     * @param callable|string[] $action
      */
-    public function get(string $route, Closure|array|string $action): void
+    public function get(string $route, callable|array $action): void
     {
         $this->router->add('GET', $route, $action);
     }
 
     /**
      * @param string $route
-     * @param Closure|string[] $action
+     * @param callable|string[] $action
      */
-    public function post(string $route, Closure|array|string $action): void
+    public function post(string $route, callable|array $action): void
     {
         $this->router->add('POST', $route, $action);
     }
 
     /**
      * @param string $route
-     * @param Closure|string[] $action
+     * @param callable|string[] $action
      */
-    public function put(string $route, Closure|array|string $action): void
+    public function put(string $route, callable|array $action): void
     {
         $this->router->add('PUT', $route, $action);
     }
 
     /**
      * @param string $route
-     * @param Closure|string[] $action
+     * @param callable|string[] $action
      */
-    public function delete(string $route, Closure|array|string $action): void
+    public function delete(string $route, callable|array $action): void
     {
         $this->router->add('DELETE', $route, $action);
     }
@@ -67,7 +66,7 @@ class Application
     /**
      * Add a route for several http verbs e.g. ['PUT', 'POST'].
      */
-    public function any(array $verbs, string $route, Closure|string $action): void
+    public function any(array $verbs, string $route, callable|array $action): void
     {
         foreach ($verbs as $verb) {
             $this->router->add($verb, $route, $action);
@@ -98,22 +97,15 @@ class Application
     }
 
     /**
-     * @param Closure|string[] $action
+     * @param callable|string[] $action
      * @param array<int,mixed> $params
      * @throws Exception
      */
-    protected function call(Closure|array|string $action, array $params): void
+    protected function call(callable|array $action, array $params): void
     {
-        if ($action instanceof Closure) {
+        if (is_callable($action)) {
             $action(...$params);
             return;
-        }
-
-        if (is_scalar($action)) {
-            $action = explode('::', $action);
-            if (!isset($action[1])) {
-                throw new Exception("Failed to call action");
-            }
         }
 
         [$class, $method] = $action;
@@ -123,7 +115,7 @@ class Application
             return;
         }
 
-        throw new Exception("Failed to call action");
+        throw new Exception(sprintf("Failed to call action %s", json_encode($action)));
     }
 
     protected function handleException(Exception $e): void

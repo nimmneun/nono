@@ -20,10 +20,10 @@ class ApplicationTest extends TestCase
         $router
             ->expects(self::once())
             ->method('add')
-            ->with(self::equalTo('GET'), self::equalTo('/'), self::equalTo('PartyController::party'));
+            ->with(self::equalTo('GET'), self::equalTo('/'), self::equalTo(['PartyController', 'party']));
         $app = new Application($router, $this->createMock(Request::class));
 
-        $app->get('/', 'PartyController::party');
+        $app->get('/', ['PartyController', 'party']);
     }
 
     /**
@@ -130,17 +130,17 @@ class ApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/dummy';
 
         $app = new Application();
-        $app->get('/dummy', 'InvalidController::lol');
-        self::assertEquals('Failed to call action', $app->run());
+        $app->get('/dummy', ['InvalidController', 'lol']);
+        self::assertEquals('Failed to call action ["InvalidController","lol"]', $app->run());
     }
 
-    public function testRunWithInvalidCallable()
+    public function testRunWithValidCallable()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/dummy';
 
         $app = new Application();
-        $app->get('/dummy', 'somethingIsMissing');
-        self::assertEquals('Failed to call action', $app->run());
+        $app->get('/dummy', 'json_encode');
+        self::assertEquals('', $app->run());
     }
 }

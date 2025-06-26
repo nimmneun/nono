@@ -17,8 +17,7 @@ class RouterTest extends TestCase
         $this->router->add('GET', '/profile/{name}', fn($request, $name) => null);
         $this->router->add('GET', '/products/{sku}/weight/{weight}', fn($request, $sku, $weight) => null);
         $this->router->add('GET', '/', [Request::class, 'requestTimeFloat']);
-        $this->router->add('GET', '/old', 'Nono\Request::requestTimeFloat');
-        $this->router->add('GET', '/nope', 'NoValidClass::index');
+        $this->router->add('GET', '/nope', ['NoValidClass', 'index']);
     }
 
     public function testExistingRoutes()
@@ -33,9 +32,6 @@ class RouterTest extends TestCase
 
         $result = $this->router->route('GET', '/');
         self::assertEquals([Request::class, 'requestTimeFloat'], $result[0]);
-
-        $result = $this->router->route('GET', '/old');
-        self::assertEquals('Nono\Request::requestTimeFloat', $result[0]);
     }
 
     public function testInvalidRoute()
